@@ -54,6 +54,11 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
+          # Create .ssh directory if it doesn't exist
+          mkdir -p ~/.ssh
+          touch ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+        
           # Install SSH key
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
