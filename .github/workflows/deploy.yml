@@ -1,0 +1,86 @@
+name: Deploy Laravel to Shared Hosting
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up PHP environment
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2' # Adjust to your Laravel app's PHP version
+          extensions: mbstring, xml, bcmath, ctype, json, tokenizer, pdo_mysql
+          coverage: none
+
+      # Step 3: Cache Composer dependencies
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      # Step 4: Install Composer dependencies
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      # Step 5: Copy .env file from secrets
+      - name: Setup environment file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+
+      # Step 6: Run Laravel optimizations
+      - name: Optimize Laravel
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+      # Step 7: Deploy to shared hosting via SSH
+      - name: Deploy to Shared Hosting
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          # Install SSH key
+          echo "$SSH_PRIVATE_KEY" > private_key
+          chmod 600 private_key
+          
+          # Add host to known_hosts
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+          
+          # Rsync files to shared hosting
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.env' \
+            --exclude='storage/logs/*' \
+            --exclude='node_modules' \
+            --exclude='public/storage' \
+            -e "ssh -i private_key -o StrictHostKeyChecking=no" \
+            ./ $SSH_USER@$SSH_HOST:$DEPLOY_PATH
+          
+          # Run post-deployment commands on the server
+          ssh -i private_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+            cd $DEPLOY_PATH
+            composer install --no-dev --optimize-autoloader --no-interaction
+            php artisan migrate --force
+            php artisan storage:link
+            chmod -R 775 storage bootstrap/cache
+            chown -R $SSH_USER:www-data storage bootstrap/cache
+          EOF
+          
+          # Clean up
+          rm private_key
