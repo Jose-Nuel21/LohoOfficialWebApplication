@@ -1,0 +1,54 @@
+name: Deploy Laravel to Shared Hosting
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy with Rsync
+        run: |
+          rsync -avz --delete \
+            --exclude='.htaccess' \
+            --exclude='.env' \
+            -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
+            ./ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
+
+      - name: Post-deployment tasks
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd ${{ secrets.DEPLOY_PATH }}
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            chmod -R 775 storage bootstrap/cache
+            chmod 644 .env
+            chown -R grandslo:grandslo .
+            if [ -f artisan ]; then
+              php artisan migrate --force
+            fi
+          EOF
