@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <meta name="format-detection" content="telephone=no">
 
-        <title>@yield('title', 'Logos Household - Home')</title>
+        <title>@yield('title', 'Logos Household')</title>
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Caveat:400,700|Lato:300,300i,400,400i,700,700i|Raleway:300,300i,400,400i,700,700i&amp;subset=latin-ext">
         <link rel="stylesheet" href="{{asset('assets/css/fontello/css/fontello.css')}}" type="text/css" media="all" />
@@ -34,8 +34,8 @@
         <link rel="stylesheet" href="{{asset('assets/css/core.messages.min.css" type="text/css')}}" media="all" />
         <link rel="stylesheet" href="{{asset('assets/js/vendor/magnific/magnific-popup.min.css')}}" type="text/css" media="all" />
 
-        <link rel="icon" href="{{asset('assets/images/favicon.png')}}" />
-        <link rel="icon" href="{{asset('assets/images/favicon.png')}}" />
+        <link rel="icon" href="{{asset('assets/images/loho.png')}}" />
+        <link rel="icon" href="{{asset('assets/images/loho.png')}}" />
         <link rel="apple-touch-icon-precomposed" href="{{asset('assets/images/loho.png')}}" />
     </head>
 

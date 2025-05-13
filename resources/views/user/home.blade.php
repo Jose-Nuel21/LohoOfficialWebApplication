@@ -1,6 +1,6 @@
 @extends('user.layouts.app')
 
-@section('title', 'Logos Household - Home')
+@section('title', 'Logos Household')
 
 @section('content')
     <!-- Revolution Slider Section -->
