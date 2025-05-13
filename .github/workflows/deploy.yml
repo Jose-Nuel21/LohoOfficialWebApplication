@@ -47,7 +47,6 @@ jobs:
           php artisan view:cache
           chmod -R 775 storage bootstrap/cache
           chmod 644 .env
-          chown -R www-data:www-data .
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
