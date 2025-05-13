@@ -2,7 +2,7 @@ name: Deploy Site on push
 on:
   push:
     branches:
-      - develop  # Trigger deployment on push to 'develop' branch
+      - main  # Trigger deployment on push to 'main' branch
 
 jobs:
   web-deploy:
