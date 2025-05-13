@@ -1,56 +1,56 @@
-name: Deploy Laravel to Shared Hosting
-
+name: Deploy Site on push
 on:
   push:
     branches:
-      - main
+      - develop  # Trigger deployment on push to 'develop' branch
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest  # Use Ubuntu for the environment
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Get the latest code
+      uses: actions/checkout@v2.3.2  # Checkout the latest code from the repository
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          tools: composer
+    - name: 📂 Sync files via FTPS
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0  # Action to deploy via FTPS
+      with:
+        server: ${{ secrets.LARAVEL_SITE_SERVER }}  # Subdomain where your project is hosted (e.g., loho.official.grandslot.ng)
+        username: ${{ secrets.LARAVEL_SITE_USER }}  
+        password: ${{ secrets.LARAVEL_SITE_PASS }}  
+        server-dir: /public_html/loho
+        protocol: ftps 
+        port: 21  
 
-      - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+    - name: Install Dependencies, Run Migration and Optimize
+      uses: garygrossgarten/github-action-ssh@release 
+      with:
+        command: |
+          cd public_html/loho 
+          composer install --no-dev --optimize-autoloader
+          php artisan migrate --force  
+          php artisan optimize:clear  
+        host: ${{ secrets.SSH_HOST }}  
+        username: ${{ secrets.SSH_USERNAME }} 
+        key: ${{ secrets.SSH_PRIVATE_KEY }}  # Use SSH key for authentication
+        port: ${{ secrets.SSH_PORT }}  
 
-      - name: Clean target directory
-        run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd ${{ secrets.DEPLOY_PATH }}
-            find . -maxdepth 1 -not -name '.' -not -name '..' -not -name '.htaccess' -not -name '.env' -exec rm -rf {} +
-          EOF
-
-      - name: Deploy with SCP
-        run: |
-          scp -P ${{ secrets.SSH_PORT }} -r -o StrictHostKeyChecking=no ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
-
-      - name: Post-deployment tasks
-        run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd ${{ secrets.DEPLOY_PATH }}
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            chmod -R 775 storage bootstrap/cache
-            chmod 644 .env
-            chown -R grandslo:grandslo .
-            if [ -f artisan ]; then
-              php artisan migrate --force
-            fi
-          EOF
+    - name: Post-deployment tasks
+      run: |
+        ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+          cd public_html/loho
+          php artisan config:cache  
+          php artisan route:cache  
+          php artisan view:cache 
+          chmod -R 775 storage bootstrap/cache 
+          chmod 644 .env 
+          chown -R www-data:www-data .
+        EOF
