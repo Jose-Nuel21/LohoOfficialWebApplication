@@ -13,7 +13,7 @@ Route::get('/gallery', [PagesController::class, 'gallery'])->name('gallery');
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/sermons', [SermonController::class, 'store'])->name('sermons.store');
     Route::put('/sermons/{id}', [SermonController::class, 'update'])->name('sermons.update');
-    Route::delete('/sermons/{id}', [SermonController::class, 'destroy'])->name('sermons.destroy');
+    //Route::delete('/sermons/{id}', [SermonController::class, 'destroy'])->name('sermons.destroy');
 });
 
 
