@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files via FTPS
-      uses: SamKirkland/FTP-Deploy-Action@4.3.5
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
         server: ${{ secrets.LARAVEL_SITE_SERVER }}
         username: ${{ secrets.LARAVEL_SITE_USER }}
@@ -33,7 +33,7 @@ jobs:
           README.md
 
     - name: 🛠 Install Dependencies, Run Migration and Optimize
-      uses: garygrossgarten/github-action-ssh@0.8.0
+      uses: garygrossgarten/github-action-ssh@release
       with:
         command: |
           cd public_html/loho
@@ -46,7 +46,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
 
     - name: 🧹 Post-deployment tasks
-      uses: garygrossgarten/github-action-ssh@0.8.0
+      uses: garygrossgarten/github-action-ssh@release
       with:
         command: |
           cd public_html/loho
