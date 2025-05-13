@@ -20,16 +20,17 @@ jobs:
         server: ${{ secrets.LARAVEL_SITE_SERVER }}
         username: ${{ secrets.LARAVEL_SITE_USER }}
         password: ${{ secrets.LARAVEL_SITE_PASS }}
-        #local-dir: ./
+        local-dir: ./
         server-dir: /public_html/loho/
         protocol: ftps
         port: 21
-        security: loose
+        state: replace
         exclude: |  # Preserve server's .env, skip repo metadata
           .git/
           .github/
           .env
           .gitignore
+          .htaccess
           README.md
 
     - name: 🛠 Install Dependencies, Run Migration and Optimize
