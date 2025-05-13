@@ -19,7 +19,7 @@ jobs:
         server: ${{ secrets.LARAVEL_SITE_SERVER }}  # Subdomain where your project is hosted (e.g., loho.official.grandslot.ng)
         username: ${{ secrets.LARAVEL_SITE_USER }}  
         password: ${{ secrets.LARAVEL_SITE_PASS }}  
-        server-dir: /public_html/loho
+        server-dir: /public_html/loho/
         protocol: ftps 
         port: 21  
 
