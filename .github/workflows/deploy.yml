@@ -24,7 +24,7 @@ jobs:
         server-dir: /public_html/loho/
         protocol: ftps
         port: 21
-        state: replace
+        dangerous-clean-slate: true
         exclude: |  # Preserve server's .env, skip repo metadata
           .git/
           .github/
