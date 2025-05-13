@@ -25,17 +25,22 @@ jobs:
         port: 21
 
     - name: 🛠 Install Dependencies, Run Migration and Optimize
-      run: |
-        sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+      uses: garygrossgarten/github-action-ssh@release
+      with:
+        command: |
           cd public_html/loho
           composer install --no-dev --optimize-autoloader
           php artisan migrate --force
           php artisan optimize:clear
-        EOF
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT }}
 
     - name: 🧹 Post-deployment tasks
-      run: |
-        sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+      uses: garygrossgarten/github-action-ssh@release
+      with:
+        command: |
           cd public_html/loho
           php artisan config:cache
           php artisan route:cache
@@ -43,4 +48,7 @@ jobs:
           chmod -R 775 storage bootstrap/cache
           chmod 644 .env
           chown -R www-data:www-data .
-        EOF
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT }}
