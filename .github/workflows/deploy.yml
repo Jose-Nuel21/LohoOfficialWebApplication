@@ -20,9 +20,12 @@ jobs:
         server: ${{ secrets.LARAVEL_SITE_SERVER }}
         username: ${{ secrets.LARAVEL_SITE_USER }}
         password: ${{ secrets.LARAVEL_SITE_PASS }}
-        server-dir: /
+        server-dir: /public_html/loho/
+        local-dir: ./
         protocol: ftps
         port: 21
+        dangerous-clean-slate: false
+        verbose: true
 
     - name: 🛠 Install Dependencies, Run Migration and Optimize
       uses: garygrossgarten/github-action-ssh@release
