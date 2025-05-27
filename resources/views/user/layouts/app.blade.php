@@ -75,6 +75,7 @@
         <script type="text/javascript" src="{{asset('assets/js/vendor/essential-grid/js/jquery.themepunch.tools.min.js')}}"></script>
         <script type="text/javascript" src="{{asset('assets/js/vendor/essential-grid/js/jquery.themepunch.essential.min.js')}}"></script>
         <script type="text/javascript" src="{{asset('assets/js/essential-grid-homepage-1.js')}}"></script>
+        <script type="text/javascript" src="{{asset('assets/js/essential-grid-sermons-boxed.min.js')}}"></script>
 
         <script type="text/javascript" src="{{asset('assets/js/vendor/revslider/jquery.themepunch.revolution.min.js')}}"></script>
 

@@ -19,19 +19,8 @@
                     <nav class="menu_main_nav_area">
                         <ul id="menu_main" class="menu_main_nav">
                             <!-- Home -->
-                            <li class="menu-item current-menu-ancestor current-menu-parent menu-item-has-children">
-                                <a href="#">Home</a>
-                                <ul class="sub-menu">
-                                    <li class="menu-item current-menu-item">
-                                        <a href="{{ route('home') }}">Home 1</a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="homepage-2.html">Home 2</a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="homepage-3.html">Home 3</a>
-                                    </li>
-                                </ul>
+                            <li class="menu-item">
+                                <a href="{{route('home')}}">Home</a>
                             </li>
                             <!-- /Home -->
                             <!-- Pages -->
@@ -73,19 +62,8 @@
                             </li>
                             <!-- /Events -->
                             <!-- Sermons -->
-                            <li class="menu-item menu-item-has-children">
-                                <a href="#">Sermons</a>
-                                <ul class="sub-menu">
-                                    <li class="menu-item">
-                                        <a href="sermons.html">All Sermons</a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="sermons-boxed.html">Sermons Boxed</a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="sermons-fullscreen.html">Sermons Fullscreen</a>
-                                    </li>
-                                </ul>
+                            <li class="menu-item">
+                                <a href="{{ route('sermons') }}">Sermons</a>
                             </li>
                             <!-- /Sermons -->
                             <!-- Gallery -->

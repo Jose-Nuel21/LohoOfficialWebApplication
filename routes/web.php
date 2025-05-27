@@ -5,6 +5,7 @@ use App\Http\Controllers\User\PagesController;
 use App\Http\Controllers\Admin\SermonController;
 
 Route::get('/', [PagesController::class, 'home'])->name('home');
+Route::get('sermons', [PagesController::class, 'sermons'])->name('sermons');
 Route::get('/contact', [PagesController::class, 'contact'])->name('contact');
 Route::get('/about-us', [PagesController::class, 'aboutUs'])->name('aboutUs');
 Route::get('/events', [PagesController::class, 'events'])->name('events');
