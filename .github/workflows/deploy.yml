@@ -24,14 +24,13 @@ jobs:
           server: ${{ secrets.LARAVEL_SITE_SERVER }}
           username: ${{ secrets.LARAVEL_SITE_USER }}
           password: ${{ secrets.LARAVEL_SITE_PASS }}
-          server-dir: /public_html/loho
+          server-dir: ./
           local-dir: ./
           protocol: ftps
           port: 21
           dangerous-clean-slate: false
-          verbose: true
-          retry: 3
-          retry-delay: 10000
+          log-level: verbose
+          timeout: 30000
 
       - name: 🛠 Install Dependencies, Run Migration and Optimize
         uses: appleboy/ssh-action@v1.0.3
