@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files via FTPS
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      uses: SamKirkland/FTP-Deploy-Action@4.3.4
       with:
         server: ${{ secrets.LARAVEL_SITE_SERVER }}
         username: ${{ secrets.LARAVEL_SITE_USER }}
