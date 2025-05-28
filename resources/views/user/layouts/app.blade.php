@@ -34,8 +34,8 @@
         <link rel="stylesheet" href="{{asset('assets/css/core.messages.min.css" type="text/css')}}" media="all" />
         <link rel="stylesheet" href="{{asset('assets/js/vendor/magnific/magnific-popup.min.css')}}" type="text/css" media="all" />
 
-        <link rel="icon" sizes="32x32" href="{{ asset('assets/images/loho.png') }}" type="image/png">
-        <link rel="apple-touch-icon-precomposed" href="{{ asset('assets/images/loho.png') }}">
+        <link rel="icon" sizes="32x32" href="{{ asset('assets/images/loho.png') }}?v=2" type="image/png">
+        <link rel="apple-touch-icon-precomposed" href="{{ asset('assets/images/loho.png') }}?v=2">
         
     </head>
 

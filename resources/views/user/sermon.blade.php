@@ -27,9 +27,9 @@
         <link rel="stylesheet" href="{{asset('assets/css/core.messages.min.css')}}" type="text/css" media="all" />
         <link rel="stylesheet" href="{{asset('assets/js/vendor/magnific/magnific-popup.min.css')}}" type="text/css" media="all" />
 
-        <link rel="icon" href="{{asset('assets/images/loho.png')}}" />
-        <link rel="icon" href="{{asset('assets/images/loho.png')}}" />
-        <link rel="apple-touch-icon-precomposed" href="{{asset('assets/images/loho.png')}}" />
+        <link rel="icon" href="{{asset('assets/images/loho.png')}}?v=2" />
+        <link rel="icon" href="{{asset('assets/images/loho.png')}}?v=2" />
+        <link rel="apple-touch-icon-precomposed" href="{{asset('assets/images/loho.png')}}?v=2" />
     </head>
 
     <body class="page body_style_wide body_filled article_style_stretch scheme_original top_panel_show top_panel_above sidebar_show sidebar_right">
