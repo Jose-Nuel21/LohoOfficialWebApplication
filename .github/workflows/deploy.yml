@@ -5,52 +5,48 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   web-deploy:
     name: Deploy
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
     steps:
-    - name: 📥 Checkout latest code
-      uses: actions/checkout@v2
+      - name: 📥 Checkout latest code
+        uses: actions/checkout@v3  # Update to v3 for better reliability
 
-    - name: 📂 Sync files via FTPS
-      uses: SamKirkland/FTP-Deploy-Action@4.3.4
-      with:
-        server: ${{ secrets.LARAVEL_SITE_SERVER }}
-        username: ${{ secrets.LARAVEL_SITE_USER }}
-        password: ${{ secrets.LARAVEL_SITE_PASS }}
-        server-dir: /
-        local-dir: ./
-        protocol: ftps
-        port: 21
-        dangerous-clean-slate: false
-        verbose: true
+      - name: 📂 Sync files via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@4.3.4
+        with:
+          server: ${{ secrets.LARAVEL_SITE_SERVER }}
+          username: ${{ secrets.LARAVEL_SITE_USER }}
+          password: ${{ secrets.LARAVEL_SITE_PASS }}
+          server-dir: /public_html/loho/
+          local-dir: ./
+          protocol: ftps
+          port: 21
+          dangerous-clean-slate: false
+          verbose: true
+          retry: 3
+          retry-delay: 5000
 
-    - name: 🛠 Install Dependencies, Run Migration and Optimize
-      uses: garygrossgarten/github-action-ssh@release
-      with:
-        command: |
-          cd public_html/loho
-          composer install --no-dev --optimize-autoloader
-          php artisan migrate --force
-          php artisan optimize:clear
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.SSH_PORT }}
-
-    - name: 🧹 Post-deployment tasks
-      uses: garygrossgarten/github-action-ssh@release
-      with:
-        command: |
-          cd public_html/loho
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
-          chmod -R 775 storage bootstrap/cache
-          chmod 644 .env
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.SSH_PORT }}
+      - name: 🛠 Install Dependencies, Run Migration and Optimize
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /public_html/loho
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan optimize:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            chmod -R 775 storage bootstrap/cache
+            chmod 644 .env
